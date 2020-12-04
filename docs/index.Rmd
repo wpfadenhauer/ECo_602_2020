@@ -1,30 +1,934 @@
 ---
-title: "ECo_602_Final_Project"
+title: "Final Project for ECo 602"
 author: "Will Pfadenhauer"
-date: "10/15/2020"
-output: html_document
+date: "12/04/2020"
+output: 
+  html_document:
+      toc: TRUE
+      toc_float: TRUE
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(message = FALSE)
+options(knitr.duplicate.label = TRUE)
+
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color, 
+      x)
+  } else x
+}
+
+
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+<!-- The following text won't be displayed in your document.  It tells R how to make nicer looking buttons for your tabbed content. -->
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+<style type="text/css" rel="stylesheet">
 
-```{r cars}
-summary(cars)
+.btn {
+    border-width: 0 0 0 0;
+    font-weight: normal;
+    text-transform: none;
+}
+
+.btn-default {
+    color: #2ecc71;
+    background-color: #ffffff;
+    border-color: #ffffff;
+}
+</style>
+
+
+# **`r colorize("Introduction", "red")`**
+
+Hi there Mike! Or future Will! Or anyone else that might be reading this. Welcome to my Final Project for ECo 602: Analysis of Environmental Data. This page details many of the useful functions in R that I've become familiar with during this course. You can use the table of contents on the left-hand side to navigate through the explanations and examples of different functions. At the bottom of this page, you'll find an sample data analysis. 
+
+
+# **`r colorize("Part 1:", "red")`** R Tutorial
+
+## **`r colorize("Functions 1:", "orange")`** Data Structure Functions {.tabset .tabset-pills}
+
+These functions represent different ways of storing, organizing, and, well, structuring data within R. 
+
+### `c()`
+
+
+The function `c()` *combines* or *concatenates* its arguments into a **vector** (a 1-dimensional data structure consisting of 1 or more elements).
+
+- Note: All of the elements must be of the same *type*. I can't combine character and numeric types in the same call to `c()`
+
+Here are two examples of vectors. The first uses numeric data and the second uses character data:
+
+```{r}
+num_vec  = c(1, 4, 8, 9, 13)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+char_vec = c("a", "fish", "data is cool")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+I can show the contents of a vector by typing the name of the vector, or using the `print()` function.
+
+```{r}
+num_vec
+```
+
+```{r}
+print(char_vec)
+```
+
+&nbsp;   
+&nbsp;   
+&nbsp;   
+&nbsp;   
+
+
+
+### `data.frame()` and Subsetting
+
+A data frame contains columns that can each be a vector of different types. 
+
+Let's build a data frame from scratch and name it "dat_1".
+```{r data_frame_example_1}
+
+dat_1 <- data.frame(
+  letters =c("b", "w", "B"),
+  numbers_1 = c(34, 6, 123454)
+  )
+```
+Notice that the first column, letters, contains character data, while the second column, numbers_1, contains numeric data. 
+
+I can print the contents of my data frame by simply typing its name.
+```{r df_print}
+dat_1
+```
+
+
+There are many ways to subset a data frame in R. Let's take a look at three of the most common methods.  
+
+1. If I know the name of a column, I can use the $ symbol. 
+
+```{r subset_1}
+dat_1$letters
+```
+
+&nbsp;   
+&nbsp;  
+
+2. I can also use the name (in quotes) of a column or row, or the numeric position of a column or row in the data frame along with []. 
+
+
+For example:
+```{r subset_2}
+dat_1["letters"]
+```
+This is just a different way of getting the same result as the `$` method. 
+
+I can also do this:
+```{r subset_3}
+dat_1[1]
+```
+This prints back the letters column yet again since it is the first column in the data frame. If I want to subset more than one column, I can use the same method to designate a range of columns: 
+
+```{r subset_4}
+dat_1[1:2]
+```
+This selects the first column, the second column, and any columns in between. 
+
+If I want to subset by row, I just need a comma to indicate that I'm not selecting any particular columns. (R likes things in the order: row, columns).
+
+```{r subset_5}
+dat_1[1,]
+```
+
+Just like with columns, I can use the names of the rows too:
+```{r subset_6}
+dat_1["1",]
+```
+This again returns the first row because that row is both first in its position in the data frame, and it is also named "1".
+
+
+As you might've guessed, this also means I can use the bracket notation to subset specific data points within the data frame by their row, column coordinates. 
+
+```{r subset_7}
+dat_1[3,1]
+```
+&nbsp;   
+&nbsp;  
+
+3. Another way to subset (in addition to `[]` and `$` ) is with the `subset()` function. For this function, I need to specify which data frame I'm using, which column or row I'd like to subset (with restrictions, if applicable), and then which other values I'd like to select for the remaining points (if applicable). For example:
+```{r subset_8}
+subset(dat_1, numbers_1>7, select = letters)
+```
+This selects the letters that are associated with (in the same row as) numeric values in the numbers_1 column that are greater than 7. 
+
+&nbsp;   
+&nbsp;  
+
+
+Subsetting can get confusing and complicated pretty quickly. 
+If I need more information for any function in R, I can always look up the help entry by typing a question mark before the function name into the R console. For example: `?subset`
+
+
+&nbsp;   
+&nbsp;   
+&nbsp;   
+&nbsp;   
+
+
+### `matrix()`
+
+Like data frames, matrices are two-dimensional structures, meaning they can hold both row and column values. Unlike data frames, however, matrices can only store one kind of data (e.g. only numeric). 
+
+Let's build a matrix from scratch and call it `matrix_1`
+```{r matrix_1}
+
+matrix_1 <- matrix(1:21, nrow = 7, byrow=TRUE)
+```
+As with the other objects, I can view them by simply typing their names. 
+```{r matrix_2}
+
+matrix_1
+```
+Notice that the first argument in the `matrix()` function is the data that gets placed into the matrix (in this case, the integers between 1 and 21). We could also use a named vector here instead of a range of numbers.
+I can tell the matrix how to organize the data with the `byrow` argument. If set to `TRUE` it tells R to fill the rows first. I could set it to `FALSE` and then R would fill columns first. Then, I can tell it how many rows I want with `nrow` and I could also tell it how many columns I want with `ncol`. 
+
+Let's name the rows and columns to keep ourselves organized. We can do that in a number of ways, but this one works fine:
+
+```{r matrix_3}
+animals <- c("Chickens", "Cows", "Pigs")
+farm_owner <- c ("Old MacDonald", "Tim", "Bob", "Joe", "Sally", "Sarah", "Ruth Bader Ginsburg")
+
+colnames(matrix_1)<- animals
+rownames(matrix_1)<- farm_owner
+```
+
+Now that I've done that, I'll print the matrix again to make sure everything looks the way I want it to. 
+```{r matrix_4}
+
+matrix_1
+```
+Dang, RBG has a lot of pigs. 
+
+&nbsp;   
+&nbsp;  
+
+I can subset matrices in similar ways as data frames. For example:
+```{r matrix_5}
+
+matrix_1[4:6, 1:3]
+```
+As before, R takes the rows first (in this case the 4th through 6th rows) and the columns second (in this case the 1st through 3rd columns).
+
+And the `subset` function still works here too. 
+```{r matrix_6}
+
+subset(matrix_1, select = "Pigs")
+```
+This is one of the many reasons that naming those columns and rows can be beneficial. 
+
+&nbsp;   
+&nbsp;   
+&nbsp;   
+&nbsp;   
+
+
+### `length()`
+The rest of the functions under "Functions 1" aren't data structures, but they help us analyze data structures. 
+The `length()` function is pretty self-explanatory. It gives us the length of an object. Let's test it out:
+
+```{r length_1}
+
+length(matrix_1)
+```
+&nbsp;  
+&nbsp;  
+&nbsp;   
+&nbsp;  
+
+It can also be used to set the length of an object. Let's create another matrix and then use the `length()` function to set its length.  
+```{r length_2}
+
+matrix_2 <- matrix(1:30, nrow = 6, byrow=TRUE)
+
+length(matrix_2) <- 24
+
+matrix_2
+```
+Look familiar? I used the same syntax to name the rows and columns of `matrix_1`
+
+- Note: When we use this method to set the length of a matrix, R converts the matrix to a string of integers because it doesn't have a way to know how to organize the 24 values it used. So, it's usually better to set the length of your matrix (or data frame or vector) when you make it. I find that `length()` is more useful in returning the length of  particularly large data structures. 
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+### `nrow()`
+The `nrow()` function operates very similarly to the `length()` function. It can either return the number of rows of a data structure, or set the number of rows of a data structure. For example:
+```{r n_row}
+
+nrow(matrix_1)
+```
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+### `ncol()`
+Surprise! The `ncol()` function also operates very similarly to the `length()` function. It can either return the number of columns of a data structure, or set the number of rows of a data structure. 
+```{r n_col}
+ncol(matrix_1)
+```
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+### `dim()`
+The `dim()` function is like a combined version of `nrow()` and `ncol()`. You can use it to view number of rows and columns (the dimensions) of an object, or set the dimensions of an object. 
+
+```{r dim}
+
+dim(matrix_1)
+```
+
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+
+## **`r colorize("Functions 2:", "Gold")`** Numerical Data Exploration  {.tabset .tabset-pills}
+
+NOTE: the examples in this section use the matrix build above in the "Functions 1" section. 
+
+### `summary()`
+The `summary()` function is used to summarize results or statistics of a given model or dataset. The exact information that gets returned depends on the object you use it for, but you can get a rough idea of what it does with this example:
+
+```{r}
+summary(matrix_1)
+```
+I've used this extensively in Part Two below, so you can read through the data analysis for more examples of how it might be used on models. 
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+### `mean()`
+The `mean()` function returns the numerical average for a data set. Notice how it is also included in the summary statistics that are produced by `summary()`. See:
+
+```{r}
+mean(matrix_1)
+```
+
+This isn't particularly useful though. It's more common to see `mean()` used along with some form of subsetting.
+
+```{r}
+mean(matrix_1[,3])
+```
+
+Notice that this matches the mean for the Pigs section of the `summary()` function. 
+
+Also, note that just like the `summary()` function, the `mean()` function can't be used on character data:
+
+```{r}
+#Try running this without the # symobl to see the error message 
+#mean(dat_1$letters)
+```
+
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+### `sd()`
+The `sd()` function returns the standard deviation of a dataset. Like the other two functions in the "Numerical Data Exploration" section, it can only be used on numerical data. 
+
+```{r}
+sd(matrix_1[,2])
+```
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+## **`r colorize("Functions 3:", "lime")`** Graphical Data Exploration {.tabset .tabset-pills}
+
+### `par()` and `mfrow()`
+
+Before we make any plots, it's helpful to format the plot window in R. Sometimes it's really helpful to be able to view more than one plot in the window at a time. To do this, we use `par()` with the `mfrow()` function to set the number of rows and columns in our plot window at a time. In other words, multiplying the two numbers in your `mfrow` argument will give you the total number of plots you'll be viewing at once. 
+
+```{r}
+par(mfrow=c(2,2))
+```
+
+This doesn't do a whole lot right now since I don't have anything to plot. But I use this again with the 4 histograms under the `hist()` button, and there you'll see they now appear as a 2x2 grid. 
+
+If you ever want to reset the plot window back to just one plot at a time, the simplest way to do that is just by entering `dev.off()` into the console. 
+
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+### `plot()`
+
+I can use `plot()` to create scatterplots! I'm just going to go ahead and create a pretty complicated plot, and then I'll break down all of the arguments below. 
+
+We'll use the `palmerpenguins` data set for this. It can easily be loaded into R with the `require()` function. 
+
+```{r scatterplot_1, fig.asp=0.8, fig.width=6}
+
+require(palmerpenguins)
+
+plot(
+  bill_length_mm ~ body_mass_g,
+  data = penguins,
+  col = "dodgerblue",
+  pch = 12,
+  cex = 1.3,
+  main = "Body Mass and Bill Length of Palmer Penguins",
+  xlab = "Body Mass (g)",
+  ylab = "Bill Length (mm)",
+  xlim = c(2500, 6500),
+  ylim = c(30, 60))
+
+```
+Okay, let's work through each of those arguments:
+
+* The first line simply told R which columns of data I wanted to plot against each other. The ~ means "as given by", which is basically another way of saying your Y variable comes first, followed by your X variable. 
+* `data` simply specifies which data set contains the values I referenced in the first line. 
+* `col` tells R what color the points should be. 
+* `pch` tells R what shape the points should be. 
+* `cex` tells R what size the points should be.
+* `main` is the main title of the plot. Note that this should be in quotes since it's technically just text and note code. The same is true for the x and y axis labels below. 
+* `xlab` is the x axis title. 
+* `ylab` is the y axis title. 
+* `xlim` is the top and bottom limits of the x axis. 
+* `ylim` is the top and bottom limits of the y axis. 
+
+Note that the same title and axis label arguments can be used for histograms and boxplots (and any other plots) as well. 
+
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+### `boxplot()`
+
+Here's how to make a simple boxplot in R. It's pretty similar to the syntax for the other plots, it just uses the `boxplot()` function. 
+```{r boxplot 1, fig.asp=0.8, fig.width=6}
+boxplot(penguins$flipper_length_mm, main="Penguin Flipper Length", ylab = "Flipper Length (mm)")
+```
+
+We can also make a conditional boxplot, if we want to look at differences within a categorical variable. We can just use the same formula notation (~) and presto!
+```{r boxplot 2, fig.asp=0.8, fig.width=6}
+boxplot(penguins$flipper_length_mm ~ penguins$species, main="Flipper Length by Species", xlab = "Species", ylab = "Flipper Length (mm)")
+
+```
+Clearly, Gentoo penguins have massive flippers compared to the other two species. 
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+### `hist()`
+
+Let's make some histograms! We can do this with the `hist()` function and many of the same arguments we used with the scatterplot. 
+```{r, fig.asp=0.8, fig.width=6}
+par(mfrow=c(2,2))
+hist(penguins$year, main="Year", xlab = "year", breaks = c(2006.5, 2007.5, 2008.5, 2009.5))
+hist(penguins$bill_depth_mm, main="Bill Depth", xlab = "Bill Depth (mm)")
+hist(penguins$bill_length_mm, main="Bill Length", xlab = "Bill Length (mm)")
+hist(penguins$flipper_length_mm, main="Flipper Length", xlab = "Flipper Length (mm)")
+
+```
+Most of the time, R makes pretty good looking histograms by itself. Every now and then though, you need to touch one up a little bit. For example, I told R exactly what breaking points to use between bins in the Year histogram. You can use the `breaks` argument to give R a numerical value that specifies how many breaks you want, or you can do what I did here: give R a vector of the exact points where you want the breaks. 
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+## **`r colorize("Functions 4:", "blue")`** Distribution Functions {.tabset .tabset-pills}
+
+### `dnorm()`
+
+This function gives the probability density function of the normal distribution. In other words, if we were to plot a normal distribution this would give us the height of the curve, given our input values. Two of the arguments (`mean` and `sd`) shape the curve, and then the third argument tells R where along the curve to look for the height (probability). 
+
+For example:
+```{r}
+dnorm(0, mean =0, sd=1)
+```
+
+Our result tells us that the probability at that point along the curve is 39%. This is also the center of the curve since the point we gave R (0) matched the mean. 
+
+```{r}
+dnorm(2, mean =0, sd=1)
+```
+
+This time, our probability is much smaller - which makes sense since now our point is 2 standard deviations away from the mean. 
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+### `pnorm()` and `qnorm()`
+
+Sometimes we want to know more than just what the probability of getting a single value is. Sometimes we want to know what the probability of getting a value and anything less than that value is. That's where `pnorm()` and `qnorm()` come in. They generate and use cumulative probabilities.(Keep in mind this is all still for the normal distribution and any data that's normally distributed.)
+
+You'll use the same arguments as `dnorm()` and you'll also add an argument (`lower.tail`). This new argument tells R which side of your initial value to add to the cumulative probability. It can either be `TRUE` (indicating everything below should be included) or `FALSE` (everything above should be included). 
+
+```{r}
+pnorm(2, mean = 0, sd=1, lower.tail = TRUE)
+```
+
+So you've got a 97.7% chance of getting a value equal to or lower than 2 with a normal distribution centered at 0 with a standard deviation of 1. 
+
+But, what if we wanted to work backwards? Say, instead of knowing the value we wanted to plug in, instead we know the probability and we'd like to know what value produces that threshold. Then we can use `qnorm()`
+
+```{r}
+qnorm(0.9772499, mean = 0, sd=1)
+```
+Notice how `pnorm()` and `qnorm()` produce "opposite" results if everything else is kept constant. 
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+### `dbinom()`
+These next 3 functions are similar to the first three in their purposes, but they operate on the binomial distribution rather than the normal distribution. The binomail distribution is used for things that have two outcomes: success/failure, live/die, etc.
+
+So the one that starts with d, `dbinom()` generates the probability of X number of successes. That X number of successes is the first argument, but you also have to specify the size of the distribution (e.g. how many things are living or dying) and the probaility of success (e.g. how likely are you to live). 
+
+
+```{r}
+dbinom(30, 100, 0.3)
+```
+So the probability of getting 30 successes out of 100 total chances when each one has a 0.3 chance of being successful is about 8.6%. 
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+### `pbinom()`and `qbinom()`
+
+Great! But what if we want to know the probability of getting *at least* 30 successes out of 100 total chances when each one has a 0.3 chance of being successful? Well, just like before, we can use a function that starts with p to calculate our cumulative probability.
+
+```{r}
+pbinom(30, 100, 0.3)
+```
+Much higher!
+
+And lastly, we can use the q version of the function to work backwards and answer the question of how many successes would give us a 54% cumulative probability:
+
+```{r}
+qbinom(0.5491, 100, 0.3)
+```
+
+Notice again the "opposite" nature of `pbinom()` and  `qbinom()`. 
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+## **`r colorize("Functions 5:", "Violet")`** Other Functions {.tabset .tabset-pills}
+
+
+### `subset()`
+See the "`data.frame()` and Subsetting" button under Functions 1 for more details on the `subset()` function. 
+
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+### `library()` and `require()`
+
+Both of these functions essentially do the same thing. They're used for loading packages for use in R. Note that first you'll have to run `install.packages()` on whatever you're installing, and then you'll need to run library() or require() to actually make those installed packages (and all their functions usable). For example:
+
+```{r}
+#Run without the # sign
+#install.packages("fun")
+require(fun)
+```
+Fun is always required when you're using R!
+
+Now we can do fun things:
+```{r}
+mine_sweeper(width =10, height =10, mines = 20, cheat = FALSE)
+```
+It won't show up on GitHub (doesn't have the required graphic software) but it'll work within R. 
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+### `read.csv()`
+This function will allow you to load data stored in a CSV file into R. I can show you an example of the code, but if you don't have the same CSV in the same location on your computer, that code won't work for you. But here's an example anyway:
+
+```{r}
+require(here)
+dat_delomys <- read.csv(here("data", "delomys.csv"))
+```
+In order for `here()` to work, you'll need to run `require(here)` first, and you'll need to make sure the project you're working in is set to the proper folder. Right now, my project is set to a folder called ECo_602_2020, so that's where R goes when I tell it `here()`. Then, I can navigate to the file from there - so "data" is another folder within ECo_602_2020 and the delomys.csv file is within that data folder. 
+
+&nbsp;  
+&nbsp;  
+&nbsp;  
+&nbsp;  
+
+
+
+
+# **`r colorize("Part 2:", "maroon")`** Data Anaylsis
+
+In this section, I'll work through a data analysis for a sample data set. Let's start off by loading our data in R, and then looking at the summary statistics for a couple of variables (body mass and body length)
+```{r read data}
+require(here)
+
+dat_delomys <- read.csv(here("data", "delomys.csv"))
+
+summary(dat_delomys$body_mass)
+```
+
+
+```{r sum mass}
+summary(dat_delomys$body_mass)
+```
+
+Let's dig a little deeper and try to understand the data better. We can run a Shapiro test to determine whether or not our data is normally distributed with respect to the `body_mass` and `body_length` variables. 
+```{r shap test}
+shapiro.test(dat_delomys$body_mass)
+shapiro.test(dat_delomys$body_length)
+```
+
+For the Shapiro test, the null hypothesis is that the data are normally distributed. Since we have really small p-values for both of these groups of data, that means we have significant evidence to reject the null hypothesis. In other words, it looks like are data are skewed (not normally distributed). 
+
+&nbsp; 
+&nbsp; 
+&nbsp; 
+&nbsp; 
+
+
+## **`r colorize("Graphical Exploration", "purple")`** {.tabset .tabset-pills}
+Now, let's move on to graphical exploration. 
+
+### Scatterplot
+I'll start with a simple scatterplot comparing body length and body mass. 
+```{r scatterplot, fig.width=6, fig.asp=0.8}
+plot(body_length ~ body_mass, data=dat_delomys)
+```
+&nbsp;   
+Looking at this, we can say that the relationship between body mass and body length looks roughly linear. There appears to be a gentle increasing slope indicating that as body mass increases, body length also increases. There are some points that don't fit this pattern, but the vast majority of points look like they do match this idea pretty well. 
+
+### Histograms
+Now, let's look at the histograms for body mass and body length. 
+```{r hist 1, fig.width=6, fig.asp=0.8}
+hist(dat_delomys$body_mass,
+     main = "Histogram of Body Mass",
+     xlab="Body Mass")
+```
+
+&nbsp;   
+&nbsp; 
+
+This histogram looks pretty darn close to the normal distribution. This is the opposite of what the Shapiro test told us, though. Let's take a look at body length. 
+```{r hist 2, fig.width=6, fig.asp=0.8}
+hist(dat_delomys$body_length,
+     main = "Histogram of Body Length",
+     xlab="Body Length")
+```
+
+&nbsp;   
+&nbsp; 
+
+This also looks like it is normally distributed. There are a few small bins on the right side, but aside from that it is also pretty close. Once again, this contracts our results from the Shapiro test. This sometimes happens, especially since large data sets can make the p-values for the Shapiro tests really small, even if the data don't differ that much from the normal distribution. In this case, I'm going to use my best judgment and say the data is close enough to the normal distribution for our purposes. We'll revisit this concept again with the residuals from the models we build. 
+
+### Conditional Boxplots
+
+```{r condbox1, fig.width=6, fig.asp=0.8}
+boxplot(body_mass ~ binomial, data = dat_delomys,
+        main = "Boxplot of Body Mass Separated by Species",
+     xlab="Species", ylab="Body Mass")
+```
+
+```{r condbox2, fig.width=6, fig.asp=0.8}
+boxplot(body_mass ~ sex, data=dat_delomys, 
+        main = "Boxplot of Body Mass Separated by Sex",
+     xlab="Sex", ylab="Body Mass")
+```
+
+```{r condbox3, fig.width=6, fig.asp=0.8}
+boxplot(body_mass ~ binomial + sex, data = dat_delomys, 
+        main = "Boxplot of Body Mass Separated by Both Species and Sex",
+     xlab="Species and Sex", ylab="Body Mass", names = c("dorsalis \n Female", "sublineatus \n Female", "dorsalis \n Male", "sublineatus \n Male"))
+```
+
+These three conditional boxplots tell us that there are probably some significant differences in body mass between species, especially when species are further divided by sex. In other words, males of *Delomys dorsalis* tend to be slightly heavier (on average) than females of the same species, but males of *Delomys dorsalis* are clearly heavier (on average) when compared to males of *Delomys sublineatus*. Likewise, females of *Delomys dorsalis* are clearly heavier (on average) than females of *Delomys sublineatus* 
+
+
+&nbsp; 
+&nbsp; 
+&nbsp; 
+&nbsp; 
+
+
+## **`r colorize("Model Building", "chartreuse")`**
+
+Now that we've got a good idea of what the data look like, let's try fitting some models. 
+The first one we'll try is a simple linear regression. Once we fit the model, we can use `summary()` to see the results. 
+```{r fit 1}
+fit1 <- lm(body_length ~ body_mass, data = dat_delomys)
+
+```
+
+&nbsp;   
+
+Let's generate some similar linear models to run ANOVAs on. The one above modeled the relationship between body length and body mass, but this time let's see if body mass is better determined by sex or species (or both). 
+```{r fit 2}
+fit2 <- lm(body_mass ~ sex, data = dat_delomys)
+
+anova_fit2 <- anova(fit2)
+
+```
+
+&nbsp;   
+
+Great! Now let's do it all again, instead with species instead of sex. 
+```{r fit 3}
+fit3 <- lm(body_mass ~ binomial, data = dat_delomys)
+
+anova_fit3 <- anova(fit3)
+
+```
+
+&nbsp;   
+
+Now let's use both sex and species (but independent of each other) in the same model. 
+```{r fit 4}
+fit4 <- lm(body_mass ~ sex + binomial, data = dat_delomys)
+
+anova_fit4 <- anova(fit4)
+
+```
+
+&nbsp;   
+
+Lastly, let's look at the combined effects of sex and species on body mass. 
+```{r fit 5}
+fit5 <- lm(body_mass ~ sex * binomial, data = dat_delomys)
+
+anova_fit5 <- anova(fit5)
+
+```
+
+&nbsp; 
+&nbsp; 
+&nbsp; 
+&nbsp; 
+
+
+## **`r colorize("Model Diagnostics", "deepskyblue")`**{.tabset .tabset-pills}
+
+
+
+Before we dig in to the results of our models, we first need to check some assumptions. The main assumption we're checking here is normality. This is very similar to what we did at the beginning of Part 2 - we'll plot a histogram and compare it to the results of a Shapiro test. Except, instead of using out data, we'll use the residuals from each of the models we created. 
+
+### Histograms
+
+Let's star by plotting a histogram of the residuals of each model. 
+```{r, fig.width=6, fig.asp=0.8}
+hist(residuals(fit1), main = "Histogram of Residuals of Linear Model",
+     xlab = "Residual Value")
+
+hist(residuals(fit2), main = "Histogram of Residuals of Body Mass ~ Sex Model",
+     xlab = "Residual Value")
+
+hist(residuals(fit3), main = "Histogram of Residuals of Body Mass ~ Species Model",
+     xlab = "Residual Value")
+
+hist(residuals(fit4), main = "Histogram of Residuals of Body Mass ~ Sex + Species Model",
+     xlab = "Residual Value")
+
+hist(residuals(fit5), main = "Histogram of Residuals of Body Mass ~ Sex * Species Model",
+     xlab = "Residual Value")
+```
+
+&nbsp;   
+&nbsp;   
+&nbsp;   
+&nbsp;   
+&nbsp;   
+
+
+### Shapiro Tests
+Now let's run Shapiro tests on those same residuals. 
+
+```{r shap tests resids}
+shapiro.test(residuals(fit1))
+
+shapiro.test(residuals(fit2))
+
+shapiro.test(residuals(fit3))
+
+shapiro.test(residuals(fit4))
+
+shapiro.test(residuals(fit5))
+```
+
+Just like before, each one of our histograms conflicts with the results from its corresponding Shaprio test. In other words, all of our histograms look normally distributed, but all of our Shapiro tests tell us that the residuals of our models are not normally distributed. 
+According to the Shapiro tests, the first model is more skewed than any of the others, the second model is the closest to the normal distribution, and the other three have about the same severity of violation of the normality assumption. 
+
+However, since the histograms for models 2-5 all look normally distributed, my best judgment tells me that they're probably close enough to normal for us to use to model our data. I suspect the relatively low p-values are the results of the large sample sizes. 
+
+&nbsp;   
+&nbsp;   
+&nbsp; 
+&nbsp; 
+
+## **`r colorize("Model Interpretation", "gold")`** {.tabset .tabset-pills}
+
+Now that we've tested some of the assumptions for our models, let's take a look some of the results. 
+
+### Linear Model Coefficients (Fit 1)
+
+For these, we'll use `coef()` in combination with `summary()`  to get a good look at the results of each model. To make them look nice, we can put them in tables with the `knitr::kable()` function. 
+```{r tables}
+knitr::kable(coef(summary(fit1)))
+```
+
+The 76 value represents the estimated body length for an organism with a body mass of 0. It's the y-intercept, hence the name in the table. Moving from that point, we know that every unit increase in body mass results in a 0.875 unit increase in body length. In other words the slope is 0.875 since the rise (increase in body length) is 0.875 when the run (increase in body mass) is 1.
+
+Using this information, we can make estimates for any value of body mass. For example, if the body mass is 0, that would just be our intercept value of 76.124, and if the body mass is 100, that would be (100*0.875) + 76.124 which = 163.624. 
+
+&nbsp;   
+
+### ANOVA Coefficients (Fits 2 - 5)
+Ok, now let's look at the other models, which are for body mass. 
+```{r tables 2}
+knitr::kable(coef(summary(fit2)))
+```
+
+```{r}
+knitr::kable(coef(summary(fit3)))
+```
+
+```{r}
+knitr::kable(coef(summary(fit4)))
+```
+
+```{r}
+knitr::kable(coef(summary(fit5)))
+```
+
+Looking at all of these tables, we can learn a couple of things. First, we can note that the base case for sex is female in each of our models, and the base case for species is *dorsalis* in each of our models.  
+
+Also, in all 4 models, we can see that males are consistently heavier than females, and that *dorsalis* individuals are heavier than *sublineatus* individuals. 
+
+&nbsp;   
+
+### ANOVA Tables (Fits 2 - 5)
+We're not done yet! Let's look at the ANOVA tables for each of the models as well. 
+
+```{r}
+
+knitr::kable(anova(fit2))
+
+knitr::kable(anova(fit3))
+
+knitr::kable(anova(fit4))
+
+knitr::kable(anova(fit5))
+
+```
+
+So what exactly do all of these tables tell us? Well we can look at the p-values (the last columns) for each model to determine whether our variables are significant predictors of body mass. Usually, we use a p-value threshold of 0.05, so any values below that indicate a significant predictor. 
+
+We can also use the magnitude of the p-values to roughly estimate which of the models is the best predictor of body mass. 
+
+In all of our models, sex and species always generate p-values below 0.05, so we can say pretty confidently that they are both significant predictors of body mass. 
+
+For the `fit5` table, we can see that the sex:binomial row generated a very large p-value. This indicates that there is not a significant interaction between sex and species. 
+
+The magnitudes of the p-values remain pretty constant between models. In other words, sex hovers around 0.00011 and species is always 0. Because these values don't really change, we can say that all of our models are about equally accurate in determining body mass. 
+
+&nbsp; 
+&nbsp; 
+&nbsp; 
+&nbsp; 
+
+## **`r colorize("Model Comparison", "orchid")`**
+
+So if all of the models provided similar results, how do we decide which one is best? Let's use AIC. 
+
+```{r}
+AIC(fit2)
+AIC(fit3)
+AIC(fit4)
+AIC(fit5)
+```
+
+Ok, so `fit4` and `fit5` have similarly low AICs. This makes sense, since we know both sex and species are significant predictors, and `fit2` and `fit3` each leave out one of those predictors. 
+
+
+So, the AIC values ofr `fit4` and `fit5` didn't help us pick one. What's the difference between these two models again? Well, the additive model (`fit4`) suggests that the difference between sex is the same for all species and the difference in species is the same for both sexes. In other words, it considers the effects of sex and species on body mass independently of one another, even though they're both in the same model. The factorial model (`fit5`) doesn't assume that, and allows for more differences between all the individual sex/species possibilities. In other words, it tests the interaction between species and sex and their combined effects on body mass, which we noted previously was not significant. 
+
+So, since `fit5` uses a lot more combinations of sex and species and gets the same results as the less complicated model (`fit4`), I'll choose to select `fit4`. It strikes the balance between accuracy and simplicity since it's way more accurate than the first two models and a bit less complicated than the last one. Woohoo!
+
+&nbsp; 
+&nbsp; 
+&nbsp; 
+
+
+#### **`r colorize("Woah, you made it all the way to the end. I didn't think anyone would actually get here. Well, congrats, I guess! ", "burlywood")`**
+
+&nbsp; 
+&nbsp;   
+
+**`r colorize("By the way, this color's called 'burlywood'. Kind of bland for the name, right?", "burlywood")`**
+
+
+
+
+
+
+
