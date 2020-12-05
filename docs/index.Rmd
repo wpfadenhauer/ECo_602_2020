@@ -349,7 +349,7 @@ Notice that this matches the mean for the Pigs section of the `summary()` functi
 Also, note that just like the `summary()` function, the `mean()` function can't be used on character data:
 
 ```{r}
-#Try running this without the # symobl to see the error message 
+#Try running this without the # symbol to see the error message 
 #mean(dat_1$letters)
 ```
 
@@ -416,6 +416,8 @@ plot(
   ylim = c(30, 60))
 
 ```
+
+&nbsp;  
 Okay, let's work through each of those arguments:
 
 * The first line simply told R which columns of data I wanted to plot against each other. The ~ means "as given by", which is basically another way of saying your Y variable comes first, followed by your X variable. 
